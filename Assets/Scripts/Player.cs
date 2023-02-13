@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _speed = 2.0f;
     [SerializeField] private float _jumpStrength = 15.0f;
     [SerializeField]private float _gravity = 1.0f;
+    private int _coinCollected = 0;
     private bool _doubleJump;
     private float _jumpDelay;
     private float _yVelocity;
@@ -58,11 +59,16 @@ public class Player : MonoBehaviour
         var _yMaxVelocity = Mathf.Clamp(_yVelocity, -20, 100f);
         
         Vector3 _direction = _gameInput.GetMovementVectorNormalized();
-        Vector3 _velocity = _direction * _speed;
+        Vector3 _xVelocity = _direction * _speed;
         
-        Vector3 movement = new Vector3(_velocity.x, _yMaxVelocity, 0);
-        _controller.Move(movement * Time.deltaTime);
+        Vector3 _movement = new Vector3(_xVelocity.x, _yMaxVelocity, 0);
+        _controller.Move(_movement * Time.deltaTime);
 
     }
 
+    public void AddCoins() 
+    {
+        _coinCollected++;
+        UIManager._instance.UpdateCoinText(_coinCollected);
+    }
 }
