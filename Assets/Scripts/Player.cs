@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
     {
         _gameInput = GetComponent<GameInput>();
         _controller = GetComponent<CharacterController>();
+        if (_gameInput == null) Debug.LogError("Missing Game Input");
+        if (_controller == null) Debug.LogError("Missing Character Controller");
     }
 
     private void Update()

@@ -8,7 +8,8 @@ public class Coin : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player")) 
         {
-            other.gameObject.GetComponent<Player>().AddCoins();
+            other.gameObject.TryGetComponent<Player>(out Player _playerScript);
+            _playerScript.AddCoins();
             Destroy(this.gameObject);
         }
     }
