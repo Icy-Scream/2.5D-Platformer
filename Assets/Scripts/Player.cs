@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _jumpStrength = 15.0f;
     [SerializeField]private float _gravity = 1.0f;
     [SerializeField] private bool _groundPlayer;
+    private int _lives = 3;
     private float _yVelocity;
    
     private int _coinCollected = 0;
@@ -24,9 +26,21 @@ public class Player : MonoBehaviour
         if (_controller == null) Debug.LogError("Missing Character Controller");
     }
 
+    private void Start()
+    {
+        UIManager._instance.UpdateLivesText(_lives);
+        UIManager._instance.UpdateCoinText(_coinCollected);
+    }
+
     private void Update()
     {
+        Movement();
+        ResetSpawn();
+        Death();
+    }
 
+    private void Movement() 
+    {
         _groundPlayer = _controller.isGrounded;
 
 
@@ -36,18 +50,20 @@ public class Player : MonoBehaviour
             _yVelocity = -_gravity;
         }
 
-        if (_groundPlayer == true && _gameInput.IsJumping()) {
+        if (_groundPlayer == true && _gameInput.IsJumping())
+        {
             _yVelocity += _jumpStrength;
             _doubleJump = false;
             _jumpDelay = Time.time + 0.3f;
-            
+
         }
-        else if(_groundPlayer == false) 
+        else if (_groundPlayer == false)
         {
-            if (!_doubleJump && _gameInput.IsJumping() && Time.time > _jumpDelay) 
+            if (!_doubleJump && _gameInput.IsJumping() && Time.time > _jumpDelay)
             {
                 _doubleJump = true;
-                if(_yVelocity < 0) { 
+                if (_yVelocity < 0)
+                {
                     _yVelocity = 0;
                     _yVelocity += 5f;
                 }
@@ -56,18 +72,42 @@ public class Player : MonoBehaviour
 
             }
 
-        _yVelocity -= _gravity * Time.deltaTime;
+            _yVelocity -= _gravity * Time.deltaTime;
 
         }
 
         var _yMaxVelocity = Mathf.Clamp(_yVelocity, -20, 100f);
-        
+
         Vector3 _direction = _gameInput.GetMovementVectorNormalized();
         Vector3 _xVelocity = _direction * _speed;
-        
+
         Vector3 _movement = new Vector3(_xVelocity.x, _yMaxVelocity, 0);
         _controller.Move(_movement * Time.deltaTime);
 
+    }
+
+    private void ResetSpawn() 
+    {
+        Vector3 _currentPosition = transform.position;
+        Vector3 _spawnLocation = new Vector3(0, 1, 0);
+        bool uiZeroLivesText = _lives > 0;
+
+        if (_currentPosition.y < -5) 
+        {
+            transform.position = _spawnLocation;
+            _lives--;
+            if(uiZeroLivesText)
+            UIManager._instance.UpdateLivesText(_lives);
+        }
+    }
+
+
+    private void Death() 
+    {
+        if(_lives < 0) 
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     public void AddCoins() 
@@ -75,4 +115,5 @@ public class Player : MonoBehaviour
         _coinCollected++;
         UIManager._instance.UpdateCoinText(_coinCollected);
     }
+
 }

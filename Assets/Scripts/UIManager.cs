@@ -5,7 +5,7 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public static UIManager _instance;
-    [SerializeField] TMP_Text _coinText;
+    [SerializeField] TMP_Text _coinText,_liveText;
 
     private void Start()
     {
@@ -17,8 +17,9 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        _coinText.text = ($"Coins: {0}");
     }
 
     public void UpdateCoinText(int value) => _coinText.text = ($"Coins: {value}");
+
+    public void UpdateLivesText(int lives) => _liveText.text = ($"Lives: {lives}");
 }
