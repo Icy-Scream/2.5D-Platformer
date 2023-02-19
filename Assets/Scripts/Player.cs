@@ -10,11 +10,12 @@ public class Player : MonoBehaviour
     [SerializeField] private float _speed = 2.0f;
     [SerializeField] private float _jumpStrength = 15.0f;
     [SerializeField]private float _gravity = 1.0f;
+    [SerializeField] private bool _groundPlayer;
+    private float _yVelocity;
+   
     private int _coinCollected = 0;
     private bool _doubleJump;
     private float _jumpDelay;
-    private float _yVelocity;
-    [SerializeField] private bool _groundPlayer;
     private void Awake()
     {
         _gameInput = GetComponent<GameInput>();
@@ -29,9 +30,10 @@ public class Player : MonoBehaviour
         _groundPlayer = _controller.isGrounded;
 
 
-        if (_groundPlayer == true) { 
+        if (_groundPlayer == true)
+        {
             _controller.Move(Vector3.zero);
-             _yVelocity = -_gravity;
+            _yVelocity = -_gravity;
         }
 
         if (_groundPlayer == true && _gameInput.IsJumping()) {

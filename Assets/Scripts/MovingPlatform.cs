@@ -9,18 +9,42 @@ public class MovingPlatform : MonoBehaviour
     private bool _returnPosition;
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (!_returnPosition) 
-        { 
+        PingPong();
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player")) 
+        {
+            Debug.Log("Standing");
+            other.transform.parent = this.transform;
+            other.transform.position = this.transform.position;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            other.transform.parent = null;
+        }
+    }
+
+    private void PingPong() 
+    {
+        if (!_returnPosition)
+        {
             transform.position = Vector3.MoveTowards(transform.position, _wayPoints[0].position, _speed * Time.deltaTime);
             if (transform.position == _wayPoints[0].position)
                 _returnPosition = true;
-            
+
         }
-       else if (_returnPosition) 
-        { 
-           transform.position = Vector3.MoveTowards(transform.position, _wayPoints[1].position, _speed * Time.deltaTime);
+        else if (_returnPosition)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _wayPoints[1].position, _speed * Time.deltaTime);
             if (transform.position == _wayPoints[1].position)
                 _returnPosition = false;
 
