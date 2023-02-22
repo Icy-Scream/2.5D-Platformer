@@ -14,10 +14,13 @@ public class Player : MonoBehaviour
     [SerializeField] private bool _groundPlayer;
     private int _lives = 3;
     private float _yVelocity;
-
+    private  Vector3 _direction;
+    private Vector3 _xVelocity;
     public int _coinCollected { get; private set; } = 0;
     private bool _doubleJump;
     private float _jumpDelay;
+    [SerializeField] private bool _canWallJump;
+   [SerializeField] private Vector3 _wallJumpVelocity;
     private void Awake()
     {
         _gameInput = GetComponent<GameInput>();
@@ -39,18 +42,32 @@ public class Player : MonoBehaviour
         Death();
     }
 
-    private void Movement() 
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        
+        
+        if(_controller.isGrounded == false && hit.transform.CompareTag("Wall"))
+        {
+            Debug.DrawRay(hit.point, hit.normal, Color.blue);
+            _canWallJump = true;
+            _wallJumpVelocity = hit.normal * 2f;
+        }    
+    }
+
+
+    private void Movement()
     {
         _groundPlayer = _controller.isGrounded;
 
 
         if (_groundPlayer == true)
         {
+            _canWallJump = false;
             _controller.Move(Vector3.zero);
             _yVelocity = -_gravity;
         }
 
-        if (_groundPlayer == true && _gameInput.IsJumping())
+        if (_groundPlayer == true && _gameInput.IsJumping() && !_canWallJump)
         {
             _yVelocity += _jumpStrength;
             _doubleJump = false;
@@ -59,16 +76,32 @@ public class Player : MonoBehaviour
         }
         else if (_groundPlayer == false)
         {
-            if (!_doubleJump && _gameInput.IsJumping() && Time.time > _jumpDelay)
+            if ((_canWallJump && _gameInput.IsJumping() && Time.time > _jumpDelay))
             {
                 _doubleJump = true;
+                _canWallJump = false;
+                _xVelocity = _wallJumpVelocity;
+
                 if (_yVelocity < 0)
                 {
                     _yVelocity = 0;
-                    _yVelocity += 5f;
+                    _yVelocity += 8f;
                 }
                 else
-                    _yVelocity += 5f;
+                    _yVelocity += 8f;
+            }
+
+            if ((!_doubleJump && _gameInput.IsJumping() && Time.time > _jumpDelay))
+            {
+                _doubleJump = true;
+              
+                if (_yVelocity < 0)
+                {
+                    _yVelocity = 0;
+                    _yVelocity += 6f;
+                }
+                else
+                    _yVelocity += 6f;
 
             }
 
@@ -77,13 +110,16 @@ public class Player : MonoBehaviour
         }
 
         var _yMaxVelocity = Mathf.Clamp(_yVelocity, -20, 100f);
+        
+        if (_groundPlayer == true)
+        {
+            _direction = _gameInput.GetMovementVectorNormalized();
+            _xVelocity = _direction * _speed;
+        }
 
-        Vector3 _direction = _gameInput.GetMovementVectorNormalized();
-        Vector3 _xVelocity = _direction * _speed;
-
-        Vector3 _movement = new Vector3(_xVelocity.x, _yMaxVelocity, 0);
-        _controller.Move(_movement * Time.deltaTime);
-
+   
+            Vector3 _movement = new Vector3(_xVelocity.x, _yMaxVelocity, 0);
+            _controller.Move(_movement * Time.deltaTime);
     }
 
     private void ResetSpawn() 
