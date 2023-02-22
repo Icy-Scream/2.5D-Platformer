@@ -14,8 +14,8 @@ public class Player : MonoBehaviour
     [SerializeField] private bool _groundPlayer;
     private int _lives = 3;
     private float _yVelocity;
-   
-    private int _coinCollected = 0;
+
+    public int _coinCollected { get; private set; } = 0;
     private bool _doubleJump;
     private float _jumpDelay;
     private void Awake()
