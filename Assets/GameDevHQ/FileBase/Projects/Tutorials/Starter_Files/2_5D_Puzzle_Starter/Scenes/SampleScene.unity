@@ -1796,12 +1796,12 @@ PrefabInstance:
     - target: {fileID: 3126217594258255233, guid: 3a7f53b22d7c026499590234396e5fcd,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 20
+      value: 18.992266
       objectReference: {fileID: 0}
     - target: {fileID: 3126217594258255233, guid: 3a7f53b22d7c026499590234396e5fcd,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.93
+      value: 5.449
       objectReference: {fileID: 0}
     - target: {fileID: 3126217594258255233, guid: 3a7f53b22d7c026499590234396e5fcd,
         type: 3}
@@ -1892,17 +1892,17 @@ PrefabInstance:
     - target: {fileID: 3126217594258255233, guid: 3a7f53b22d7c026499590234396e5fcd,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 10.980968
       objectReference: {fileID: 0}
     - target: {fileID: 3126217594258255233, guid: 3a7f53b22d7c026499590234396e5fcd,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 15.43
+      value: 15.445133
       objectReference: {fileID: 0}
     - target: {fileID: 3126217594258255233, guid: 3a7f53b22d7c026499590234396e5fcd,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 19.3
+      value: 19.809515
       objectReference: {fileID: 0}
     - target: {fileID: 3126217594258255233, guid: 3a7f53b22d7c026499590234396e5fcd,
         type: 3}
@@ -2755,6 +2755,10 @@ MonoBehaviour:
   _jumpStrength: 15
   _gravity: 9.8
   _groundPlayer: 0
+  _wallJumpForceX: 2.5
+  _wallJumpForceY: 5.2
+  _canWallJump: 0
+  _wallJumpVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &1798249452
 MonoBehaviour:
   m_ObjectHideFlags: 0

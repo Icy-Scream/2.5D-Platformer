@@ -19,8 +19,10 @@ public class Player : MonoBehaviour
     public int _coinCollected { get; private set; } = 0;
     private bool _doubleJump;
     private float _jumpDelay;
+    [SerializeField] private float _wallJumpForceX;
+    [SerializeField] private float _wallJumpForceY;
     [SerializeField] private bool _canWallJump;
-   [SerializeField] private Vector3 _wallJumpVelocity;
+    [SerializeField] private Vector3 _wallJumpVelocity;
     private void Awake()
     {
         _gameInput = GetComponent<GameInput>();
@@ -44,13 +46,16 @@ public class Player : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        
-        
-        if(_controller.isGrounded == false && hit.transform.CompareTag("Wall"))
+
+
+        if (_controller.isGrounded == false && hit.transform.CompareTag("Wall"))
         {
             Debug.DrawRay(hit.point, hit.normal, Color.blue);
-            _canWallJump = true;
-            _wallJumpVelocity = hit.normal * 2f;
+            if (hit.normal.x == 1f || hit.normal.x == -1f) 
+            {
+                _wallJumpVelocity = hit.normal * _wallJumpForceX;
+                _canWallJump = true;
+            }
         }    
     }
 
@@ -85,10 +90,10 @@ public class Player : MonoBehaviour
                 if (_yVelocity < 0)
                 {
                     _yVelocity = 0;
-                    _yVelocity += 8f;
+                    _yVelocity += _wallJumpForceY;
                 }
                 else
-                    _yVelocity += 8f;
+                    _yVelocity += _wallJumpForceY;
             }
 
             if ((!_doubleJump && _gameInput.IsJumping() && Time.time > _jumpDelay))
