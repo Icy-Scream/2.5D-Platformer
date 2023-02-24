@@ -14,7 +14,7 @@ public class Elevator : MonoBehaviour
     void Start()
     {
         gameInput = FindObjectOfType<Player>().GetComponent<GameInput>();
-        gameInput.OnInteract += ActivateElevator_OnInteract;
+        elevatorPanel.OnCallElevator += ActivateElevator_OnInteract;
     }
 
     private void ActivateElevator_OnInteract(object sender, System.EventArgs e)
@@ -36,8 +36,12 @@ public class Elevator : MonoBehaviour
             if (!_returnPosition)
             {
                 transform.position = Vector3.MoveTowards(transform.position, _wayPoints[0].position, _speed * Time.deltaTime);
-                if (transform.position == _wayPoints[0].position)
+                if (transform.position == _wayPoints[0].position) 
+                {
+                    transform.position = _wayPoints[0].position;
+                    yield return new WaitForSeconds(1f);
                     _returnPosition = true;
+                }
             }
             else if (_returnPosition)
             {

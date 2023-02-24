@@ -20,16 +20,24 @@ public class ElevatorPanel : MonoBehaviour
         {
             _gameInput = FindObjectOfType<Player>().GetComponent<GameInput>();
         }
-
+        
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
            other.TryGetComponent<Player>(out player);
         
         if (other.CompareTag("Player"))
         {
-          _gameInput.OnInteract += ActivateElevator;
+            _gameInput.OnInteract += ActivateElevator;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _gameInput.OnInteract -= ActivateElevator;
         }
     }
 

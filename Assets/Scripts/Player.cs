@@ -1,6 +1,3 @@
-using JetBrains.Annotations;
-using System.Net;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,21 +5,26 @@ public class Player : MonoBehaviour
 {
     private GameInput _gameInput;
     private CharacterController _controller;
+    
     [SerializeField] private float _speed = 2.0f;
     [SerializeField] private float _jumpStrength = 15.0f;
     [SerializeField]private float _gravity = 1.0f;
     [SerializeField] private bool _groundPlayer;
+    private float _pushPower = 2f;
+    public int _coinCollected { get; private set; } = 0;
     private int _lives = 3;
+    
     private float _yVelocity;
     private  Vector3 _direction;
     private Vector3 _xVelocity;
-    public int _coinCollected { get; private set; } = 0;
+    
     private bool _doubleJump;
     private float _jumpDelay;
+    
     [SerializeField] private float _wallJumpForceX;
     [SerializeField] private float _wallJumpForceY;
     [SerializeField] private bool _canWallJump;
-    [SerializeField] private Vector3 _wallJumpVelocity;
+    [SerializeField] private Vector3 _wallJumpNormal;
     private void Awake()
     {
         _gameInput = GetComponent<GameInput>();
@@ -46,17 +48,28 @@ public class Player : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-
-
+        
+        
         if (_controller.isGrounded == false && hit.transform.CompareTag("Wall"))
         {
             Debug.DrawRay(hit.point, hit.normal, Color.blue);
-            if (hit.normal.x == 1f || hit.normal.x == -1f) 
+            Debug.Log(_wallJumpNormal);
+            if (hit.normal.x == 1f || hit.normal.x == -1f)
             {
-                _wallJumpVelocity = hit.normal * _wallJumpForceX;
+                _wallJumpNormal = hit.normal * _wallJumpForceX;
                 _canWallJump = true;
             }
-        }    
+        }
+
+        if (hit.transform.CompareTag("Moving_Box")) 
+        {
+            Rigidbody body = hit.collider.attachedRigidbody;
+            if (body == null || body.isKinematic) return;
+            Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, 0);
+            body.velocity = pushDir * _pushPower;
+        }
+
+
     }
 
 
@@ -85,7 +98,7 @@ public class Player : MonoBehaviour
             {
                 _doubleJump = true;
                 _canWallJump = false;
-                _xVelocity = _wallJumpVelocity;
+                _xVelocity = _wallJumpNormal;
 
                 if (_yVelocity < 0)
                 {
